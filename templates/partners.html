@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nearby Partners | Sahayak</title>
+
+    <!-- Leaflet Map -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <!-- Sahayak CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="site-header">
+
+    <div class="container header-inner">
+
+        <a href="{{ url_for('home') }}"
+           class="logo">
+
+            Sahayak
+
+        </a>
+
+
+        <nav class="nav-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('matcher') }}">
+                Find a Scheme
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+
+<!-- MAIN -->
+
+<main>
+
+    <section class="partner-page">
+
+        <div class="container">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="partner-page-header">
+
+
+                <div class="partner-title-area">
+
+                    <div class="location-icon">
+                        📍
+                    </div>
+
+
+                    <div>
+
+                        <h1>
+                            Available Partners
+                        </h1>
+
+
+                        <p>
+                            Find authorized partners near you
+                            to access this scheme.
+                        </p>
+
+
+                        <span class="partner-count">
+
+                            {{ partners|length }}
+                            partners found
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SELECTED SCHEME -->
+
+                <div class="selected-scheme-mini">
+
+                    <span>
+                        Selected Scheme
+                    </span>
+
+
+                    <strong>
+                        {{ scheme.name }}
+                    </strong>
+
+
+                    <a href="{{ url_for('matcher') }}">
+
+                        Change Scheme →
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- MAP -->
+
+            <div class="partner-map-card">
+
+
+                <div class="map-heading">
+
+
+                    <div>
+
+                        <h2>
+                            Partner Locations
+                        </h2>
+
+
+                        <p>
+                            View available partners on the map.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="location-button"
+                        onclick="useMyLocation()">
+
+                        📍 Use My Location
+
+                    </button>
+
+
+                </div>
+
+
+                <div id="map"></div>
+
+
+            </div>
+
+
+
+            <!-- PARTNER LIST -->
+
+            <section class="partner-list">
+
+
+                {% for partner in partners %}
+
+
+                <div class="partner-card">
+
+
+                    <!-- LEFT SECTION -->
+
+                    <div class="partner-main">
+
+
+                        <div class="partner-icon-large">
+
+                            {% if partner.type == "SCA" %}
+
+                                🏛️
+
+                            {% elif partner.type == "RRB" %}
+
+                                🏦
+
+                            {% else %}
+
+                                🏢
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <div class="partner-info">
+
+
+                            <div class="partner-badge">
+
+                                {{ partner.type }}
+
+                            </div>
+
+
+                            <h2>
+                                {{ partner.name }}
+                            </h2>
+
+
+                            <p class="partner-location">
+
+                                📍 {{ partner.city }},
+                                West Bengal
+
+                            </p>
+
+
+
+                            {% if partner.type == "SCA" %}
+
+                                <p class="partner-description">
+
+                                    Nodal agency for implementation
+                                    of Sahayak-supported schemes.
+
+                                </p>
+
+                            {% elif partner.type == "RRB" %}
+
+                                <p class="partner-description">
+
+                                    Regional banking partner for
+                                    scheme financing and support.
+
+                                </p>
+
+                            {% else %}
+
+                                <p class="partner-description">
+
+                                    Banking partner for loan processing
+                                    and financial assistance.
+
+                                </p>
+
+                            {% endif %}
+
+
+
+                            <!-- STATUS -->
+
+                            {% if partner.status == "Accepting Applications" %}
+
+                                <div class="status-pill status-accepting">
+
+                                    ✓
+
+                                    {{ partner.status }}
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="status-pill status-limited">
+
+                                    ◷
+
+                                    {{ partner.status }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- MIDDLE SECTION -->
+
+                    <div class="partner-middle">
+
+
+                        <div class="partner-detail-row">
+
+                            <span class="detail-icon">
+                                📍
+                            </span>
+
+
+                            <div>
+
+                                <span class="detail-label">
+                                    Location
+                                </span>
+
+
+                                <strong>
+
+                                    {{ partner.city }},
+                                    West Bengal
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="partner-detail-row">
+
+                            <span class="detail-icon">
+                                🏛️
+                            </span>
+
+
+                            <div>
+
+                                <span class="detail-label">
+                                    Partner Type
+                                </span>
+
+
+                                <strong>
+                                    {{ partner.type }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="partner-detail-row">
+
+                            <span class="detail-icon">
+                                📄
+                            </span>
+
+
+                            <div>
+
+                                <span class="detail-label">
+                                    Services
+                                </span>
+
+
+                                <strong>
+
+                                    {% if partner.type == "SCA" %}
+
+                                        Scheme guidance &
+                                        application support
+
+                                    {% elif partner.type == "RRB" %}
+
+                                        Loan processing &
+                                        application support
+
+                                    {% else %}
+
+                                        Loan processing &
+                                        credit assessment
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- RIGHT SECTION -->
+
+                    <div class="partner-actions">
+
+
+                        <div class="distance-box">
+
+
+                            <span class="distance-icon">
+                                📍
+                            </span>
+
+
+                            <div>
+
+                                <span>
+                                    Distance
+                                </span>
+
+
+                               <strong class="partner-distance">
+                                  {{ partner.distance }}
+                               </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- GOOGLE MAPS -->
+
+                        <a
+                            class="directions-button"
+                            href="https://www.google.com/maps/dir/?api=1&destination={{ partner.latitude }},{{ partner.longitude }}"
+                            target="_blank"
+                            rel="noopener noreferrer">
+
+                            ➤ &nbsp; Get Directions →
+
+                        </a>
+
+
+
+                        <!-- VIEW ON MAP -->
+
+                        <button
+                            type="button"
+                            class="map-button"
+                            data-lat="{{ partner.latitude }}"
+                            data-lng="{{ partner.longitude }}"
+                            onclick="showPartnerFromButton(this)">
+
+                            🗺️ &nbsp; View on Map
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+                {% endfor %}
+
+
+            </section>
+
+
+
+            <!-- PROTOTYPE NOTICE -->
+
+            <div class="prototype-notice">
+
+
+                <div class="notice-icon">
+                    ℹ
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Prototype Notice
+                    </h3>
+
+
+                    <p>
+
+                        Partner locations and availability shown
+                        here are demonstration data for prototype
+                        purposes. In a production system, Sahayak
+                        would connect to authenticated partner and
+                        fund-utilization databases.
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- BACK -->
+
+            <div class="partner-back">
+
+                <a
+                    href="{{ url_for('emi', scheme_id=scheme.id) }}"
+                    class="back-link">
+
+                    ← Back to EMI Calculator
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- LEAFLET -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+
+<script>
+
+
+/* =========================================================
+   PARTNER DATA
+========================================================= */
+
+const partners = {{ partners | tojson }};
+
+
+
+/* =========================================================
+   DEFAULT LOCATION
+========================================================= */
+
+const defaultLatitude = 22.5726;
+
+const defaultLongitude = 88.3639;
+
+
+
+/* =========================================================
+   CREATE MAP
+========================================================= */
+
+const map = L.map("map").setView(
+    [
+        defaultLatitude,
+        defaultLongitude
+    ],
+    12
+);
+
+
+
+/* =========================================================
+   OPEN STREET MAP
+========================================================= */
+
+L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        attribution:
+            "&copy; OpenStreetMap contributors"
+    }
+).addTo(map);
+
+
+
+/* =========================================================
+   ADD PARTNER MARKERS
+========================================================= */
+
+partners.forEach(function(partner) {
+
+
+    const marker = L.marker(
+        [
+            Number(partner.latitude),
+            Number(partner.longitude)
+        ]
+    ).addTo(map);
+
+
+
+    marker.bindPopup(
+
+        "<strong>" +
+        partner.name +
+        "</strong><br>" +
+
+        partner.type +
+        " • " +
+        partner.city +
+        "<br>" +
+
+        partner.distance +
+        "<br><br>" +
+
+        "<strong>" +
+        partner.status +
+        "</strong>"
+
+    );
+
+
+
+    partner.marker = marker;
+
+});
+
+
+
+/* =========================================================
+   SHOW ALL PARTNERS
+========================================================= */
+
+if (partners.length > 0) {
+
+
+    const locations =
+        partners.map(function(partner) {
+
+            return [
+                Number(partner.latitude),
+                Number(partner.longitude)
+            ];
+
+        });
+
+
+    map.fitBounds(
+        locations,
+        {
+            padding: [40, 40]
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   VIEW PARTNER ON MAP
+========================================================= */
+
+function showPartnerFromButton(button) {
+
+
+    const latitude =
+        Number(button.dataset.lat);
+
+
+    const longitude =
+        Number(button.dataset.lng);
+
+
+
+    if (
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
+    ) {
+
+        return;
+
+    }
+
+
+
+    map.setView(
+        [
+            latitude,
+            longitude
+        ],
+        15
+    );
+
+
+
+    partners.forEach(function(partner) {
+
+
+        const partnerLatitude =
+            Number(partner.latitude);
+
+
+        const partnerLongitude =
+            Number(partner.longitude);
+
+
+
+        if (
+            partnerLatitude === latitude &&
+            partnerLongitude === longitude
+        ) {
+
+
+            if (partner.marker) {
+
+                partner.marker.openPopup();
+
+            }
+
+        }
+
+    });
+
+
+
+    document
+        .getElementById("map")
+        .scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "center"
+
+        });
+
+}
+
+
+
+/* =========================================================
+   USER LOCATION
+========================================================= */
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const earthRadius = 6371;
+
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(
+        Math.sqrt(a),
+        Math.sqrt(1 - a)
+    );
+
+    return earthRadius * c;
+}
+
+
+function useMyLocation() {
+
+    if (!navigator.geolocation) {
+        alert(
+            "Location services are not supported by your browser."
+        );
+        return;
+    }
+
+    const button = document.querySelector(".location-button");
+
+    if (button) {
+        button.textContent = "📍 Finding your location...";
+        button.disabled = true;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const userLatitude =
+                position.coords.latitude;
+
+            const userLongitude =
+                position.coords.longitude;
+
+
+            // Add user's location
+            const userMarker = L.marker([
+                userLatitude,
+                userLongitude
+            ])
+            .addTo(map);
+
+            userMarker.bindPopup(
+                "<strong>Your Location</strong>"
+            ).openPopup();
+
+
+            // Calculate distance for every partner
+            partners.forEach(function(partner) {
+
+                partner.calculatedDistance =
+                    calculateDistance(
+                        userLatitude,
+                        userLongitude,
+                        Number(partner.latitude),
+                        Number(partner.longitude)
+                    );
+
+            });
+
+
+            // Sort nearest to farthest
+            partners.sort(function(a, b) {
+                return (
+                    a.calculatedDistance -
+                    b.calculatedDistance
+                );
+            });
+
+
+            // Update distance displayed on cards
+            const distanceElements =
+                document.querySelectorAll(
+                    ".partner-distance"
+                );
+
+            partners.forEach(function(partner, index) {
+
+                if (!distanceElements[index]) {
+                    return;
+                }
+
+                const distance =
+                    partner.calculatedDistance;
+
+                if (distance < 1) {
+
+                    distanceElements[index]
+                        .textContent =
+                        Math.round(distance * 1000) + " m";
+
+                } else {
+
+                    distanceElements[index]
+                        .textContent =
+                        distance.toFixed(1) + " km";
+                }
+
+            });
+
+
+            // Fit map around user + partners
+            const locations = [
+                [
+                    userLatitude,
+                    userLongitude
+                ]
+            ];
+
+            partners.forEach(function(partner) {
+
+                locations.push([
+                    Number(partner.latitude),
+                    Number(partner.longitude)
+                ]);
+
+            });
+
+            map.fitBounds(
+                locations,
+                {
+                    padding: [50, 50]
+                }
+            );
+
+
+            if (button) {
+                button.textContent = "📍 Location Found";
+                button.disabled = false;
+            }
+
+        },
+
+        function(error) {
+
+            if (button) {
+                button.textContent = "📍 Use My Location";
+                button.disabled = false;
+            }
+
+            if (error.code === 1) {
+
+                alert(
+                    "Location permission was denied. " +
+                    "Please allow location access in your browser."
+                );
+
+            } else {
+
+                alert(
+                    "Unable to access your location. " +
+                    "Showing demo partner locations."
+                );
+
+            }
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+
+</script>
+
+
+</body>
+
+</html>
